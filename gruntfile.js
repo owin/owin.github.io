@@ -10,7 +10,7 @@ module.exports = function(grunt) {
                     expand: true,
                     cwd: 'spec',
                     src: ['**/*.md'],
-                    dest: 'output',
+                    dest: 'hmtl',
                     ext: '.html'
                 }]
             }
@@ -21,5 +21,5 @@ module.exports = function(grunt) {
 
     grunt.loadNpmTasks('grunt-md2html');
 
-    grunt.registerTask('default', ['convert']);
+    grunt.registerTask('default', ['md2html']);
 }
