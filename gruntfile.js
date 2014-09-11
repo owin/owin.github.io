@@ -10,7 +10,7 @@ module.exports = function(grunt) {
                     expand: true,
                     cwd: 'spec',
                     src: ['**/*.md'],
-                    dest: 'hmtl',
+                    dest: 'html',
                     ext: '.html'
                 }]
             }
