@@ -1,5 +1,5 @@
 <h1 id="owin-open-web-server-interface-for-net">OWIN: Open Web Server Interface for .NET</h1>
-<p><strong>Version</strong><br>1.1.0-draft<br><strong>Author</strong><br><a href="https://github.com/owin/owin.github.com/issues">OWIN working group</a><br><strong>Copyright</strong><br>OWIN contributors<br><strong>License</strong><br><a href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Creative Commons Attribution 3.0 Unported License</a><br><strong>Last updated</strong><br>05 June 2014  </p>
+<p><strong>Version</strong><br>1.0.1-draft<br><strong>Author</strong><br><a href="https://github.com/owin/owin.github.com/issues">OWIN working group</a><br><strong>Copyright</strong><br>OWIN contributors<br><strong>License</strong><br><a href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Creative Commons Attribution 3.0 Unported License</a><br><strong>Last updated</strong><br>24 October 2014  </p>
 <hr>
 <ol>
 <li><a href="#1-overview">Overview</a></li>
@@ -112,6 +112,11 @@
 <td><strong>No</strong></td>
 <td><code>owin.RequestId</code></td>
 <td>An optional <code>string</code> that uniquely identifies a request. The value is opaque and SHOULD have some level of uniqueness. A Host MAY specify this value. If it is not specified, middleware MAY set it. Once set, it SHOULD NOT be modified.</td>
+</tr>
+<tr>
+<td><strong>No</strong></td>
+<td><code>owin.RequestUser</code></td>
+<td>An optional identity that represents the user associated with a request. The identity MUST be a <code>ClaimsPrincipal</code>. Middleware MAY specify this value. If it is not specified, middleware MAY set it. Once set, it MAY BE modified.</td>
 </tr>
 </tbody>
 </table>

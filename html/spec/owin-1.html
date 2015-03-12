@@ -57,7 +57,7 @@
 </ul>
 </blockquote>
 <p>In addition to these keys, the host, server, middleware, application, etc. may add arbitrary data associated with the request or response to the environment dictionary</p>
-<p> Guidelines for additional keys and a list of commonly defined keys can be found in the <a href="http://owin.org/spec/CommonKeys.html">CommonKeys addendum</a> to this spec.</p>
+<p> Guidelines for additional keys and a list of commonly defined keys can be found in the [CommonKeys addendum][/html/spec/CommonKeys] to this spec.</p>
 <h3 id="3-2-1-request-data">3.2.1 Request Data</h3>
 <table>
 <thead>
@@ -269,7 +269,7 @@
 </tbody>
 </table>
 </blockquote>
-<p>In addition to these keys the host, server, middleware, application, etc. may add arbitrary data associated with the application configuration to the properties dictionary. Guidelines for additional keys and a list of commonly defined keys can be found in the <a href="http://owin.org/spec/CommonKeys.html">CommonKeys addendum</a> to this spec.</p>
+<p>In addition to these keys the host, server, middleware, application, etc. may add arbitrary data associated with the application configuration to the properties dictionary. Guidelines for additional keys and a list of commonly defined keys can be found in the [CommonKeys addendum][spec/CommonKeys] to this spec.</p>
 <h2 id="5-uri-reconstruction">5. URI Reconstruction</h2>
 <p>Applications often require the ability to reconstruct the complete URI of a request. This process cannot be perfect since HTTP clients do not usually transmit the complete URI which they are requesting, but OWIN makes provisions for the purpose of reconstructing the approximate URI of a request.</p>
 <h3 id="5-1-uri-scheme">5.1. URI Scheme</h3>
@@ -349,7 +349,7 @@ if(Environment[&quot;owin.RequestQueryString&quot;] != &quot;&quot;)
 </li>
 <li><p>All implementers SHOULD clearly document the full version number(s) of the OWIN standard they support.</p>
 </li>
-<li><p>The keys listed in the <a href="http://owin.org/spec/CommonKeys.html">CommonKeys addendum</a> to this spec are strictly optional. Additions may be made there without directly affecting the OWIN standard or version number.</p>
+<li><p>The keys listed in the [CommonKeys addendum][/html/spec/CommonKeys] to this spec are strictly optional. Additions may be made there without directly affecting the OWIN standard or version number.</p>
 </li>
 </ul>
 <hr>
