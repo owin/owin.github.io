@@ -1,0 +1,224 @@
+<h1 id="owin-middlewares">OWIN Middlewares</h1>
+<p><strong>Version</strong>
+1.0.0-draft.1</p>
+<p><strong>Authors</strong>
+Sebastien Lambla (Caffeine IT)</p>
+<p><strong>License</strong>
+<a href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Creative Commons Attribution 3.0 Unported License</a></p>
+<p><strong>Last updated</strong>
+14 October 2015</p>
+<h2 id="abstract">Abstract</h2>
+<p>The <a href="http://owin.org/spec/owin-1.0.1-draft.1.md">OWIN Specification</a> defines a standard interface between .NET web servers
+and web applications. This document specifies additional standard interfaces
+for reusable OWIN Middleware components.</p>
+<h2 id="status">Status</h2>
+<p>This is a working draft.</p>
+<p>This document is a submission to the OWIN Working Group and is valid for a
+period of six months and may be updated, replaced, or obsoleted by other
+documents at any time. It is inappropriate to use working drafts as reference
+material or to cite them other than as &quot;work in progress&quot;</p>
+<p>This working draft will expire on 1 March 2016.</p>
+<h2 id="copyright">Copyright</h2>
+<p>Copyright (c) 2014-2015 the persons identified as the document authors. The work
+is licensed as per the
+<a href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Creative Commons Attribution 3.0 Unported License</a> in effect on the
+date of publication of this document.</p>
+<h2 id="table-of-content">Table of Content</h2>
+<ol>
+<li><a href="#1-introduction">Introduction</a><br>1.1. <a href="#11-requirements-notation">Requirements Notation</a></li>
+<li><a href="#2-definitions">Definitions</a></li>
+<li><a href="#3-middleware">Middleware</a><br>3.1. <a href="#31-examples">Examples</a><br>3.2. <a href="#32-middleware-operation">Middleware Operation</a><br>3.3. <a href="#33-signature">Signature</a><br>3.4. <a href="#34-code-sample">Code Sample</a></li>
+<li><a href="#4-middleware-registration">Middleware Registration</a><br>4.1. <a href="#41-signature">Signature</a><br> 4.1.1. <a href="#411-registration-sample">Registration Sample</a><br>4.2. <a href="#42-discovery-and-registration-of-middleware">Discovery and Registration of Middleware</a><br> 4.2.1. <a href="#421-extension-method-sample">Extension Method Sample</a>  </li>
+<li><a href="#5-versioning">Versioning</a></li>
+<li><a href="#6-acknowledgements">Acknowledgements</a></li>
+</ol>
+<h2 id="1-introduction">1. Introduction</h2>
+<p>The [OWIN] specification was created to decouple web servers and web
+applications on .NET platforms by creating a standardised abstract signature
+that can be implemented by Applications and Servers in a vendor-neutral fashion.</p>
+<p><a href="http://www.ics.uci.edu/~fielding/pubs/dissertation/net_arch_styles.htm#sec_3_4_2">Layering</a> components conforming to a uniform interface
+is a natural architectural style for HTTP-based application, and many
+application frameworks provide such abstractions in the form of reusable
+software components.</p>
+<p>This specification provides a standardised signature for such components in the
+OWIN ecosystem, hereby referred to as <strong>Middleware</strong>.</p>
+<p>OWIN Middleware is defined in terms of a delegate structure building upon the
+OWIN: Open Web Server Interface for .NET [Owin 1.0], with no
+dependency on external libraries.</p>
+<h3 id="1-1-requirements-notation">1.1. Requirements Notation</h3>
+<p> The key words &quot;MUST&quot;, &quot;MUST NOT&quot;, &quot;REQUIRED&quot;, &quot;SHALL&quot;, &quot;SHALL NOT&quot;, &quot;SHOULD&quot;,
+&quot;SHOULD NOT&quot;, &quot;RECOMMENDED&quot;, &quot;MAY&quot;, and &quot;OPTIONAL&quot; in this document are to be
+interpreted as described in <a href="http://www.ietf.org/rfc/rfc2119.txt">RFC 2119</a>.</p>
+<p>A component is deemed to be compliant with this specification if all absolute
+requirements and prohibitions are conformed to.</p>
+<p>Components and terms defined in this and other specifications are always
+capitalized, so as to clarify between a general term and the term as used in a
+specification.</p>
+<h2 id="2-definitions">2. Definitions</h2>
+<p>This document refers to the following terms:</p>
+<ul>
+<li><p><strong>Application</strong>: a process or operation inspecting, modifying or otherwise
+accessing HTTP messages, as an AppFunc signature.</p>
+</li>
+<li><p><strong>Middleware</strong>: Pass through components, capable of mediating request and
+response messages, in a pipeline model which, when
+composed, forms an Application.</p>
+</li>
+<li><p><strong>Builder</strong>: The extension point lambda used by developers to add Middleware
+components to a pipeline.</p>
+</li>
+<li><p><strong>Server</strong>: As per the OWIN specification, an HTTP server that directly
+communicates with the client, and uses OWIN semantics to process requests.</p>
+</li>
+</ul>
+<blockquote>
+<p><strong>Note</strong>
+Versions previous to owin 1.0.1 made a distinction between server and host
+components. This was later merged as the separation in responsibility was not
+relevant to the owin specifications. <strong>Host</strong> and <strong>Server</strong> are considered
+equivalent. See <a href="owin-spec">the Owin Specification 1.0.1</a></p>
+</blockquote>
+<h2 id="3-middleware">3. Middleware</h2>
+<p>An OWIN Application (see <a href="owin-spec-appfunc">AppFunc</a>) can be modelled as
+Middleware components layered in a pipeline.</p>
+<p>Each Middleware receiving a request may perform some processing on the request,
+may forward the request to the next Middleware and return the resulting
+response, or may decide to return a response immediately and not call the rest
+of the chain.</p>
+<p>In other words, a Middleware functions as a proxy of sort, completely
+encapsulating and hiding the next Middleware in the chain, transparently to the
+caller.</p>
+<h3 id="3-1-examples">3.1. Examples</h3>
+<p>For example, a Middleware responsible for logging all requests and responses
+could execute as the first component of a pipeline, and log all requests and
+responses as they pass through.</p>
+<pre><code>        request      &gt; (log request)      &gt; (process request)
+SERVER =============== LOGGER ============= WEB APPLICATION
+        response     &lt; (log response)     &lt; (return response)
+</code></pre><p>Other types of Middleware would respond immediately, without calling the next
+component in the pipeline, such as for an authorization module denying a request
+before a web application can respond.</p>
+<pre><code>        request      &gt; (authenticate)
+SERVER =============== LOGGER ------X------ WEB APPLICATION
+        response     &lt; (deny)
+</code></pre><h3 id="3-2-middleware-operation">3.2. Middleware Operation</h3>
+<p>The whole set of Middleware composing an Application are first chained together
+in a pipeline in a composition phase. The result of Middleware composition is an
+Application (OWIN AppFunc).</p>
+<p>A Server as defined by OWIN will call the resulting Application, unaware of the
+composition of the pipeline it is calling.</p>
+<p>At compose time, each Middleware is passed a reference to the next Middleware in
+the chain, and should return an Application.</p>
+<p>At run time, a Middleware can inspect and manipulate HTTP messages using the
+usual environment dictionary, and in by doing so leverages existing knowledge in
+building OWIN-compliant components.</p>
+<h3 id="3-3-signature">3.3. Signature</h3>
+<pre><code class="lang-csharp">using MidFunc = Func&lt;
+                     AppFunc, // next Middleware in the chain
+                     AppFunc // returns the resulting application
+                    &gt;
+</code></pre>
+<h3 id="3-4-code-sample">3.4. Code Sample</h3>
+<p>The following example is a Middleware logging the request and response headers.</p>
+<pre><code class="lang-csharp">// MidFunc
+public static AppFunc LogMiddleware(AppFunc nextMiddleware)
+{
+  AppFunc composedApplication = async environment =&gt; {
+
+    // log the request headers
+    Log.RequestHeaders(environment[&quot;owin.RequestHeaders&quot;]);
+
+    // pass the request to the next Middleware
+    await next(environment);
+
+    // log the response headers
+    Log.RequestHeaders(environment[&quot;owin.ResponseHeaders&quot;]);
+
+  }
+
+  return composedApplication;
+}
+</code></pre>
+<blockquote>
+<p><strong>Note</strong></p>
+<p>This specification does not preclude alternative modeling of the Middleware
+functionality from being provided
+by vendors (e.g. object-oriented model, procedural, or separate before/after
+functions), but they MUST provide a way to expose such alternate representations
+as a MidFunc-compatible function.</p>
+</blockquote>
+<h2 id="4-middleware-registration">4. Middleware Registration</h2>
+<p>The component responsible for producing the Application needs to be aware of all
+registered Middleware.</p>
+<p>In order to provide for capability discovery, configuration and shared
+initialisation, this specification introduces a factory function, taking as a
+parameter the Startup properties as defined by the
+<a href="http://owin.org/spec/owin-1.0.1-draft.1.md">OWIN specification</a>, and a builder function accepting that factory
+as a parameter.</p>
+<h3 id="4-1-signature">4.1. Signature</h3>
+<pre><code class="lang-csharp">using MidFactory = Func&lt;
+                        IDictionary&lt;string, object&gt;, // startup properties
+                        MidFunc // returns the Middleware to use
+                       &gt;;
+using BuildFunc = Action&lt;
+                         MidFactory // the factory for a middleware
+                        &gt;;
+</code></pre>
+<h4 id="4-1-1-registration-sample">4.1.1. Registration Sample</h4>
+<p>The following example adds the <code>LogMiddleware</code> component defined earlier and
+registers it with the Builder.</p>
+<pre><code class="lang-csharp">// as previously defined
+public static AppFunc LogMiddleware(AppFunc next) { /*  ... */ }
+
+// Definition of the factory
+public static MidFunc ConfigureLogMiddleware(IDictionary&lt;string, object&gt; startupProperties)
+{
+  // optionally read and write to the startup properties
+  return LogMiddleware;
+}
+</code></pre>
+<h3 id="4-2-discovery-and-registration-of-middleware">4.2. Discovery and Registration of Middleware</h3>
+<p>A common requirement for Middleware authors is to enable users to discover
+Middleware after installing a software package in their Application.</p>
+<p>In order to deliver this functionality, a Middleware MUST implement an extension
+method defined for the Builder function.</p>
+<p>Integrated development environments tend to provide API discovery in the form of
+graphical navigators. As functions usually have a few other members defined, and
+to allow easier navigation, a Middleware SHOULD prefix the extension method with
+<code>Use</code>, and SHOULDN&#39;T include the word Middleware.</p>
+<p>As an Application is often composed of many Middleware components, authors
+SHOULD return the BuildFunc in their extension method, to allow for easy
+chaining.</p>
+<h4 id="4-2-1-extension-method-sample">4.2.1. Extension Method Sample</h4>
+<p>Building on previous examples, the following defines the extension method for
+the logging Middleware.</p>
+<pre><code class="lang-csharp">// as previously defined
+public static AppFunc LogMiddleware(AppFunc next) { /*  ... */ }
+public static MidFunc ConfigureLogMiddleware(IDictionary&lt;string, object&gt; startupProperties) { /* ... */ }
+
+// definition of the Builder extension method
+public static BuildFunc UseHeaderLogging(this BuildFunc builder)
+{
+  builder(ConfiguereLogMiddleware);
+  // unfolded to:
+  // builder(startupProperties =&gt; ConfigureLogMiddleware(startupProperties));
+  // builder(startupProperties =&gt; LogMiddleware);
+  return builder;
+}
+
+// usage
+public static void ConfigureWebApplication(BuildFunc builder)
+{
+  builder.UseHeaderLogging();
+}
+</code></pre>
+<h2 id="5-versioning">5. Versioning</h2>
+<p>This document specifies version 1.0.0 of this specification. As defined in
+<a href="http://semver.org/">Versioning in OWIN</a>, the patch number will be revised for any
+update to the documentation, the minor number will be revised for any addition
+of optional and backward and forward compatible changes to this standard,
+and the major number will be revised for any breaking change to the protocol
+defined in this standard.</p>
+<h2 id="6-acknowledgements">6. Acknowledgements</h2>
+<p>Thanks to Kristian Hellang (@khellang) for his valuable feedback.</p>
+<hr>

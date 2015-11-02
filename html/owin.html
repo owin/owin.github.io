@@ -1,32 +1,14 @@
 <h1 id="owin-open-web-server-interface-for-net">OWIN: Open Web Server Interface for .NET</h1>
-<p><strong>Version</strong><br>1.0.1-draft<br><strong>Author</strong><br><a href="https://github.com/owin/owin.github.com/issues">OWIN working group</a><br><strong>Copyright</strong><br>OWIN contributors<br><strong>License</strong><br><a href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Creative Commons Attribution 3.0 Unported License</a><br><strong>Last updated</strong><br>24 October 2014  </p>
+<p><strong>Version</strong><br>1.0
+<strong>Author</strong><br><a href="https://github.com/owin/owin.github.com/issues">OWIN working group</a><br><strong>Copyright</strong><br>OWIN contributors<br><strong>License</strong><br><a href="http://creativecommons.org/licenses/by/3.0/deed.en_US">Creative Commons Attribution 3.0 Unported License</a><br><strong>Last updated</strong><br>10 October 2012</p>
 <hr>
 <ol>
 <li><a href="#1-overview">Overview</a></li>
 <li><a href="#2-definitions">Definitions</a></li>
-<li><a href="#3-request-execution">Request Execution</a><ol>
-<li><a href="#3-1-application-delegate">Application Delegate</a></li>
-<li><a href="#3-2-environment">Environment</a></li>
-<li><a href="#3-3-headers">Headers</a></li>
-<li><a href="#3-4-request-body-100-continue-and-completed-semantics">Request Body</a></li>
-<li><a href="#3-5-response-body">Response Body</a></li>
-<li><a href="#3-6-request-lifetime">Request Lifetime</a></li>
-</ol>
-</li>
+<li><a href="#3-request-execution">Request Execution</a><br>3.1. <a href="#31-application-delegate">Application Delegate</a><br>3.2. <a href="#32-environment">Environment</a><br>3.3. <a href="#33-headers">Headers</a><br>3.4. <a href="#34-request-body-100-continue-and-completed-semantics">Request Body</a><br>3.5. <a href="#35-response-body">Response Body</a><br>3.6. <a href="#36-request-lifetime">Request Lifetime</a>  </li>
 <li><a href="#4-application-startup">Application Startup</a></li>
-<li><a href="#5-uri-reconstruction">URI Reconstruction</a><ol>
-<li><a href="#5-1-uri-scheme">URI Scheme</a></li>
-<li><a href="#5-2-hostname">Hostname</a></li>
-<li><a href="#5-3-paths">Paths</a></li>
-<li><a href="#5-4-uri-reconstruction-algorithm">URI Reconstruction Algorithm</a></li>
-<li><a href="#5-5-percent-encoding">Percent-encoding</a></li>
-</ol>
-</li>
-<li><a href="#6-error-handling">Error Handling</a><ol>
-<li><a href="#6-1-application-errors">Application Errors</a></li>
-<li><a href="#6-2-server-errors">Server Errors</a></li>
-</ol>
-</li>
+<li><a href="#5-uri-reconstruction">URI Reconstruction</a><br>5.1. <a href="#51-uri-scheme">URI Scheme</a><br>5.2. <a href="#52-hostname">Hostname</a><br>5.3. <a href="#53-paths">Paths</a><br>5.4. <a href="#54-uri-reconstruction-algorithm">URI Reconstruction Algorithm</a><br>5.5. <a href="#55-percent-encoding">Percent-encoding</a>  </li>
+<li><a href="#6-error-handling">Error Handling</a><br>6.1. <a href="#61-application-errors">Application Errors</a><br>6.2. <a href="#62-server-errors">Server Errors</a>  </li>
 <li><a href="#7-versioning">Versioning</a></li>
 </ol>
 <hr>
@@ -95,7 +77,7 @@
 <tr>
 <td><strong>Yes</strong></td>
 <td><code>owin.RequestHeaders</code></td>
-<td>An <code>IDictionary&lt;string, string[]&gt;</code> of request headers. See <a href="#3-3-headers">Headers</a>.</td>
+<td>An <code>IDictionary&lt;string, string[]&gt;</code> of request headers. See <a href="#33-headers">Headers</a>.</td>
 </tr>
 <tr>
 <td><strong>Yes</strong></td>
@@ -105,12 +87,12 @@
 <tr>
 <td><strong>Yes</strong></td>
 <td><code>owin.RequestPath</code></td>
-<td>A <code>string</code> containing the request path. The path MUST be relative to the &quot;root&quot; of the application delegate. See <a href="#5-3-paths">Paths</a>.</td>
+<td>A <code>string</code> containing the request path. The path MUST be relative to the &quot;root&quot; of the application delegate. See <a href="#53-paths">Paths</a>.</td>
 </tr>
 <tr>
 <td><strong>Yes</strong></td>
 <td><code>owin.RequestPathBase</code></td>
-<td>A <code>string</code> containing the portion of the request path corresponding to the &quot;root&quot; of the application delegate; see <a href="#5-3-paths">Paths</a>.</td>
+<td>A <code>string</code> containing the portion of the request path corresponding to the &quot;root&quot; of the application delegate; see <a href="#53-paths">Paths</a>.</td>
 </tr>
 <tr>
 <td><strong>Yes</strong></td>
@@ -125,17 +107,7 @@
 <tr>
 <td><strong>Yes</strong></td>
 <td><code>owin.RequestScheme</code></td>
-<td>A <code>string</code> containing the URI scheme used for the request (e.g., <code>&quot;http&quot;</code>, <code>&quot;https&quot;</code>); see <a href="#5-1-uri-scheme">URI Scheme</a>.</td>
-</tr>
-<tr>
-<td><strong>No</strong></td>
-<td><code>owin.RequestId</code></td>
-<td>An optional <code>string</code> that uniquely identifies a request. The value is opaque and SHOULD have some level of uniqueness. A Host MAY specify this value. If it is not specified, middleware MAY set it. Once set, it SHOULD NOT be modified.</td>
-</tr>
-<tr>
-<td><strong>No</strong></td>
-<td><code>owin.RequestUser</code></td>
-<td>An optional identity that represents the user associated with a request. The identity MUST be a <code>ClaimsPrincipal</code>. Middleware MAY specify this value. If it is not specified, middleware MAY set it. Once set, it MAY BE modified.</td>
+<td>A <code>string</code> containing the URI scheme used for the request (e.g., <code>&quot;http&quot;</code>, <code>&quot;https&quot;</code>); see <a href="#51-uri-scheme">URI Scheme</a>.</td>
 </tr>
 </tbody>
 </table>
@@ -152,12 +124,12 @@
 <tr>
 <td><strong>Yes</strong></td>
 <td><code>owin.ResponseBody</code></td>
-<td>A <code>Stream</code> used to write out the response body, if any. See <a href="#3-5-response-body">Response Body</a>.</td>
+<td>A <code>Stream</code> used to write out the response body, if any. See <a href="#35-response-body">Response Body</a>.</td>
 </tr>
 <tr>
 <td><strong>Yes</strong></td>
 <td><code>owin.ResponseHeaders</code></td>
-<td>An <code>IDictionary&lt;string, string[]&gt;</code> of response headers. See <a href="#3-3-headers">Headers</a>.</td>
+<td>An <code>IDictionary&lt;string, string[]&gt;</code> of response headers. See <a href="#33-headers">Headers</a>.</td>
 </tr>
 <tr>
 <td><strong>No</strong></td>
@@ -335,7 +307,7 @@ if(Environment[&quot;owin.RequestQueryString&quot;] != &quot;&quot;)
    uri += &quot;?&quot; + (string)Environment[&quot;owin.RequestQueryString&quot;];
 }
 </code></pre>
-<p>The result of this algorithm may not be identical to the URI the client used to make the request; for example, the server may have done some rewriting to canonicalize the request. Further, it is subject to the caveats described in the <a href="#5-1-uri-scheme">URI Scheme</a> and <a href="#5-2-hostname">Hostname</a> sections above.</p>
+<p>The result of this algorithm may not be identical to the URI the client used to make the request; for example, the server may have done some rewriting to canonicalize the request. Further, it is subject to the caveats described in the <a href="#51-uri-scheme">URI Scheme</a> and <a href="#52-hostname">Hostname</a> sections above.</p>
 <h3 id="5-5-percent-encoding">5.5. Percent-encoding</h3>
 <p>A URI uses percent encoding to transport characters outside its normally allowed character rules (<a href="http://www.ietf.org/rfc/rfc3986.txt">RFC 3986</a> section 2). Percent-encoding is used to express the underlying octets present in a URI component, whose octets are interpreted via UTF-8 encoding. Most web server implementations will perform percent-decoding on paths in order to perform request routing (as they rightly may, see: RFC 2616 section <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec5.html#sec5.1.2">5.1.2</a>, also <a href="http://www.w3.org/Protocols/rfc2616/rfc2616-sec3.html#sec3.2.3">3.2.3</a>), and OWIN follows this precedent. The request query string in OWIN is presented in its percent-encoded form; a percent-decoded query string could contain <code>&#39;?&#39;</code> or <code>&#39;=&#39;</code> characters, which would render the string unparseable.</p>
 <blockquote>
